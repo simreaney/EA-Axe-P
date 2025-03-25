@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SCIMAP P for River Axe</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html, body, #map {
+            width: 100%;
+            height: 95%;
+        }
+    </style>
+    <style>
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+
+        .legend {
+            text-align: left;
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<h1>SCIMAP P for River Axe</h1>
+<button id="locationButton">Locate Me</button>
+<div id="map"></div>
+
+<script>
+    var map = L.map('map').setView([50.82336, -2.94429], 11);
+
+    // OpenStreetMap Tile Layer (added directly to the map)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Background map &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    map1 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/top10pcent/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Top 10% critical source areas for P based on SCIMAP'
+    });
+
+    map2 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/CSAs/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Hydrological connectivity based on the Network Index'
+    });
+
+    map3 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/mobPot/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Potential physcial mobilsiation of material'
+    });
+
+    map4 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/inStreamConcn/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'In stream P risk concentration'
+    });
+
+    map5 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/breakthroughAndDeliveryPoints/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Breakthrough and Delivery Points'
+    });
+
+    map6 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/pathways/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Flow pathways'
+    });
+    map7 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/heatmapBPs/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Heatmap of Breakthrough Points'
+    });
+    map8 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/heatmapDPs/{z}/{x}/{y}.png', {
+        minZoom: 8,
+        maxZoom: 18,
+        tms: false,
+        attribution: 'Sim Reaney / SCIMAP',
+        name: 'Heatmap of Delivery Points'
+    });
+    var overlayMaps = {
+        "Instream Risk Concentration": map4,
+        "CSAs - Top 10% P Sources": map1,
+        "Hydrological Connectivity": map2,
+        "Mobilisation Potential": map3,
+        'Breakthrough and delivery points': map5,
+        'Flow and sediment surface flow pathways': map6,
+        'Heatmap of breakthrough points': map7,
+        'Heatmap of delivery points': map8
+    };
+
+    L.control.layers(null, overlayMaps).addTo(map); // Null for baseMaps
+
+    //legend
+    function getColor(d) {
+        return d > 1.0 ? '#ebffff' :
+            d > 0.75 ? '#eb0000' :
+            d > 0.5 ? '#ffa94f' :
+            d > 0.25 ? '#ffffb7' :
+            d > 0.00 ? '#9ddf9e' :
+            '#0085bf';
+    }
+
+    map.addLayer(map4);
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 0.25, 0.5, 0.75, 1.0],
+            labels = [];
+
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i]) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+        return div;
+    };
+    legend.addTo(map);
+    //end legend
+
+    var userLocationMarker;
+
+    document.getElementById('locationButton').addEventListener('click', function() {
+        map.locate({setView: true, maxZoom: 16});
+    });
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+        if (userLocationMarker) {
+            map.removeLayer(userLocationMarker);
+        }
+
+        userLocationMarker = L.circleMarker(e.latlng, {
+            color: 'blue',
+            fillColor: 'blue',
+            fillOpacity: 0.5,
+            radius: 5
+        }).addTo(map);
+
+        userLocationMarker.bindPopup("Accuracy: " + radius).openPopup();
+    }
+
+    function onLocationError(e) {
+        alert(e.message);
+    }
+
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+</script>
+</body>
+</html>
