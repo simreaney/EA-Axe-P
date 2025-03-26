@@ -81,16 +81,9 @@
         maxZoom: 18,
         tms: false,
         attribution: 'Sim Reaney / SCIMAP',
-        name: 'Hydrological connectivity based on the Network Index'
+        name: 'Critical Source Area Scores (CSAs)'
     });
 
-    map3 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/mobPot/{z}/{x}/{y}.png', {
-        minZoom: 8,
-        maxZoom: 18,
-        tms: false,
-        attribution: 'Sim Reaney / SCIMAP',
-        name: 'Potential physcial mobilsiation of material'
-    });
 
     map4 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/inStreamConcn/{z}/{x}/{y}.png', {
         minZoom: 8,
@@ -130,14 +123,14 @@
         name: 'Heatmap of Delivery Points'
     });
     var overlayMaps = {
-        "Instream Risk Concentration": map4,
-        "CSAs - Top 10% P Sources": map1,
-        "Hydrological Connectivity": map2,
-        "Mobilisation Potential": map3,
+
+        "CSAs - Top 10% TDI5 Sources": map1,
+        "Critical Source Area Scores (CSAs)": map2,
         'Breakthrough and delivery points': map5,
         'Flow and sediment surface flow pathways': map6,
         'Heatmap of breakthrough points': map7,
-        'Heatmap of delivery points': map8
+        'Heatmap of delivery points': map8,
+        "Instream Risk Concentration": map4
     };
 
     L.control.layers(null, overlayMaps).addTo(map); // Null for baseMaps
