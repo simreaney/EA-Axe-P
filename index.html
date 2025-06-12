@@ -113,14 +113,14 @@
         maxZoom: 18,
         tms: false,
         attribution: 'Sim Reaney / SCIMAP',
-        name: 'Heatmap of Breakthrough Points'
+        name: 'Density Map of Breakthrough Points'
     });
     map8 = L.tileLayer('https://simreaney.github.io/EA-Axe-P/heatmapDPs/{z}/{x}/{y}.png', {
         minZoom: 8,
         maxZoom: 18,
         tms: false,
         attribution: 'Sim Reaney / SCIMAP',
-        name: 'Heatmap of Delivery Points'
+        name: 'Density Map of Delivery Points'
     });
     var overlayMaps = {
         "CSAs - Top 10% TDI5 Sources": map1,
@@ -128,8 +128,8 @@
         'Breakthrough and delivery points': map5,
         'Flow and sediment surface flow pathways': map6,
         'Density map of breakthrough points': map7,
-        'Density map of delivery points': map8
-        // "Instream Risk Concentration": map4
+        'Density map of delivery points': map8,
+        "Instream Risk Concentration": map4
     };
 
     L.control.layers(null, overlayMaps).addTo(map); // Null for baseMaps
